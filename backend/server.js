@@ -33,5 +33,12 @@ app.post("/customers",async(req,res)=>{
 
 });
 
+app.get("/customers", async(req,res)=>{                         //when someone asked GET /customers, give them customers
+  const customers = await Customer.find();
+  res.send(customers);
+
+})
+
+
 app.listen(5000);                                              //start ouer server and listen to requests coming from port 5000
 
