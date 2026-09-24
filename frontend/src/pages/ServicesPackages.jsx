@@ -47,12 +47,11 @@ function ServicesPackages() {
 
               <div className="p-6">
                 <h3 className="text-xl font-serif text-slate-900">
-                  Bridal Makeup
+                  Facials
                 </h3>
 
                 <p className="mt-3 text-sm text-slate-600">
-                  Professional bridal makeup designed to complement
-                  your unique style.
+                  ..................................
                 </p>
 
                 <button className="mt-5 text-xs uppercase tracking-[0.2em] text-slate-900">
@@ -70,12 +69,11 @@ function ServicesPackages() {
 
               <div className="p-6">
                 <h3 className="text-xl font-serif text-slate-900">
-                  Hairstyling
+                  Body Scrub & Polish
                 </h3>
 
                 <p className="mt-3 text-sm text-slate-600">
-                  Elegant hairstyles carefully created for your
-                  special occasion.
+                  ....................................
                 </p>
 
                 <button className="mt-5 text-xs uppercase tracking-[0.2em] text-slate-900">
@@ -93,19 +91,46 @@ function ServicesPackages() {
 
               <div className="p-6">
                 <h3 className="text-xl font-serif text-slate-900">
-                  Facial & Beauty Care
+                  Waxing
                 </h3>
 
                 <p className="mt-3 text-sm text-slate-600">
-                  Relaxing beauty treatments designed to refresh
-                  and enhance your natural radiance.
+                  .................................
                 </p>
 
                 <button className="mt-5 text-xs uppercase tracking-[0.2em] text-slate-900">
                   View Details
                 </button>
               </div>
+              
+
             </div>
+
+            {/* Service 3 */}
+            <div className="group border border-slate-200 bg-white overflow-hidden">
+              <div className="h-64 bg-slate-100">
+                {/* Service image will go here */}
+              </div>
+
+              <div className="p-6">
+                <h3 className="text-xl font-serif text-slate-900">
+                  Waxing
+                </h3>
+
+                <p className="mt-3 text-sm text-slate-600">
+                  .................................
+                </p>
+
+                <button className="mt-5 text-xs uppercase tracking-[0.2em] text-slate-900">
+                  View Details
+                </button>
+              </div>
+              
+
+            </div>
+
+
+
 
           </div>
         </div>

@@ -10,7 +10,8 @@ import BookingCTA from './components/BookingCTA';
 import Footer from './components/Footer';
 
 import ServicesPackages from './pages/ServicesPackages';
-
+import AdminDashboard from './pages/AdminDashboard';
+import AdminServices from './pages/AdminServices';
 
 function Home() {
   return (
@@ -52,6 +53,15 @@ function App() {
             </>
           }
         />
+        {/*Admin Dashboard*/}
+        <Route
+          path="/admin"
+          element={<AdminDashboard/>}/>
+
+        {/*Admin Services*/}
+        <Route 
+          path="/admin/services"
+          element={<AdminServices/>}/>
 
       </Routes>
 

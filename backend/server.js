@@ -5,6 +5,7 @@ const mongoose = require("mongoose");                        //add mongoose
 require("dotenv").config();                                  //Load the dot env package
 
 const Customer = require("./models/Customer");
+const Service = require("./models/Service");
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(()=> console.log("MongoBD Connected"))               //if connected
@@ -39,6 +40,44 @@ app.get("/customers", async(req,res)=>{                         //when someone a
 
 })
 
+
+app.post("/api/services",async (req,res)=>{
+  try{
+    const service = await Service.create(req.body);
+
+    res.status(201).json({
+      message:"Service Created Successfully",
+      service,
+    });
+
+  }catch (error){
+    console.error("Create service error:",error);
+
+    res.status(500).json({
+      message:"Failes to create service",
+      error:error.message,
+    });
+
+  }
+
+
+});
+
+app.get("/api/service",async(req,res)=>{
+  try{
+    const services = await Services.find().sort({createdAt:-1});
+    res.json(services);
+  }catch(error){
+    consle.error("Get services error:",error);
+
+    res.status(500).json({
+      message:"Failed to get services",
+      error:error.message
+    });
+
+
+  }
+});
 
 app.listen(5000);                                              //start ouer server and listen to requests coming from port 5000
 
