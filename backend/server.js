@@ -63,12 +63,12 @@ app.post("/api/services",async (req,res)=>{
 
 });
 
-app.get("/api/service",async(req,res)=>{
+app.get("/api/services",async(req,res)=>{
   try{
-    const services = await Services.find().sort({createdAt:-1});
+    const services = await Service.find().sort({createdAt:-1});
     res.json(services);
   }catch(error){
-    consle.error("Get services error:",error);
+    console.error("Get services error:",error);
 
     res.status(500).json({
       message:"Failed to get services",
@@ -78,6 +78,57 @@ app.get("/api/service",async(req,res)=>{
 
   }
 });
+
+app.put("/api/services/:id", async (req, res) => {
+  try {
+    const service = await Service.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!service) {
+      return res.status(404).json({
+        message: "Service not found",
+      });
+    }
+
+    res.json({
+      message: "Service updated successfully",
+      service,
+    });
+  } catch (error) {
+    console.error("Update service error:", error);
+
+    res.status(500).json({
+      message: "Failed to update service",
+      error: error.message,
+    });
+  }
+});
+
+app.delete("/api/services/:id", async (req, res) => {
+  try {
+    const service = await Service.findByIdAndDelete(req.params.id);
+
+    if (!service) {
+      return res.status(404).json({
+        message: "Service not found",
+      });
+    }
+
+    res.json({
+      message: "Service deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete service error:", error);
+
+    res.status(500).json({
+      message: "Failed to delete service",
+      error: error.message,
+    });
+  }
+});
+
 
 app.listen(5000);                                              //start ouer server and listen to requests coming from port 5000
 

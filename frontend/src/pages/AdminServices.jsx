@@ -6,8 +6,11 @@ function AdminServices() {
 
   const [showForm, setShowForm] = useState(false);
 
+  const [editingService,setEditingService] = useState(null);
+
   const[formData,setFormData] = useState({
     name:"",
+    category:"",
     description:"",
     price:"",
     duration:"",
@@ -26,7 +29,7 @@ function AdminServices() {
   }, []);
 
   const handleAddService = async()=> {
-    if(!formData.name|| !formData.description || !formData.price || !formData.duration){
+    if(!formData.name|| !formData.category || !formData.description || !formData.price || !formData.duration){
       alert("Please fill all fields");
       return;
     }
@@ -38,12 +41,16 @@ function AdminServices() {
         },
         body:JSON.stringify({
           name:formData.name,
+          category:formData.category,
           description: formData.description,
           price: Number(formData.price),
           duration: formData.duration,
           status:formData.status,
         }),
       });
+
+      
+
 
       const data = await response.json();
 
@@ -59,6 +66,7 @@ function AdminServices() {
       //Clear form 
       setFormData({
         name:"",
+        category:"",
         description:"",
         price:"",
         duration:"",
@@ -74,8 +82,110 @@ function AdminServices() {
     }
   };
 
+  const handleEditService = (service) => {
+    setEditingService(service);
+    setFormData({
+      name: service.name,
+      category: service.category || "",
+      description: service.description || "",
+      price: service.price,
+      duration: service.duration,
+      status: service.status,
+    });
 
+    setShowForm(true);
+  };
 
+  const handleUpdateService = async () => {
+    if(!formData.category){
+      alert("Please select a category");
+      return;
+    }
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/services/${editingService._id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          category: formData.category,
+          description: formData.description,
+          price: Number(formData.price),
+          duration: formData.duration,
+          status: formData.status,
+        }),
+      }
+    );
+
+    
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to update service");
+        }
+
+        setServices((previousServices) =>
+          previousServices.map((service) =>
+            service._id === editingService._id
+              ? data.service
+              : service
+          )
+        );
+
+        setEditingService(null);
+
+        setFormData({
+          name: "",
+          category: "",
+          description: "",
+          price: "",
+          duration: "",
+          status: "Active",
+        });
+
+        setShowForm(false);
+
+      } catch (error) {
+        console.error("Error updating service:", error);
+        alert(error.message);
+      }
+  };
+
+    const handleDeleteService = async (id) => {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this service?"
+      );
+
+      if (!confirmDelete) {
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/services/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to delete service");
+        }
+
+        setServices((previousServices) =>
+          previousServices.filter((service) => service._id !== id)
+        );
+
+      } catch (error) {
+        console.error("Error deleting service:", error);
+        alert("Failed to delete service");
+      }
+      };  
 
 
 
@@ -151,6 +261,37 @@ function AdminServices() {
                   className="w-full mt-2 border border-slate-300 px-4 py-3 outline-none focus:border-slate-900"
                 />
               </div>
+
+              <div>
+                <label className="text-sm text-slate-600">
+                  Category
+                </label>
+
+                <select
+                value={formData.category}
+                onChange={(e)=>
+                  setFormData({
+                    ...formData,
+                    category:e.target.value,
+                  })
+                }
+                  className="w-full mt-2 border border-slate-300 px-4 py-3 outline-none focus:border-slate-900"
+                >
+                  <option value="">Select Category</option>
+                  <option value="Hair">Hair</option>
+                  <option value="Bridal">Bridal</option>
+                  <option value="Skin Care">Skin Care</option>
+                  <option value="Makeup">Makeup</option>
+                  <option value="Nails">Nails</option>
+                  <option value="Other">Other</option>
+                  
+
+                </select>
+
+              </div>
+
+
+
               <div>
                   <label className="text-sm text-slate-600">
                     Description
@@ -236,9 +377,9 @@ function AdminServices() {
             <div className="flex gap-3 mt-6">
 
               <button
-                onClick={handleAddService}
+                onClick={editingService ? handleUpdateService : handleAddService}
                 className="px-6 py-3 bg-slate-900 text-white text-xs uppercase tracking-[0.2em]">
-                Save Service
+                {editingService ? "Update Service" : "Save Service"}
               </button>
 
               <button
@@ -264,6 +405,14 @@ function AdminServices() {
 
                 <th className="px-6 py-4 text-xs uppercase tracking-[0.15em] text-slate-500">
                   Service
+                </th>
+
+                <th className="px-6 py-4 text-xs uppercase tracking-[0.15em] text-slate-500">
+                  Category
+                </th>
+
+                <th className="px-6 py-4 text-xs uppercase tracking-[0.15em] text-slate-500">
+                  Description
                 </th>
 
                 <th className="px-6 py-4 text-xs uppercase tracking-[0.15em] text-slate-500">
@@ -297,6 +446,13 @@ function AdminServices() {
                   <td className="px-6 py-5 font-medium text-slate-900">
                     {service.name}
                   </td>
+                  <td className="px-6 py-5 font-medium text-slate-900">
+                    {service.category}
+                  </td>
+
+                  <td className= "px-6 py-5 font-medium text-slate-900">
+                    {service.description}
+                  </td>
 
                   <td className="px-6 py-5 text-slate-600">
                     Rs. {service.price.toLocaleString()}
@@ -316,11 +472,17 @@ function AdminServices() {
 
                     <div className="flex gap-3">
 
-                      <button className="text-xs uppercase tracking-[0.1em] text-slate-700">
+                      <button 
+                      type="button"
+                      onClick={() => handleEditService(service)}
+                      className="text-xs uppercase tracking-widest text-slate-700">
                         Edit
                       </button>
 
-                      <button className="text-xs uppercase tracking-[0.1em] text-red-600">
+                      <button 
+                        type="button"
+                        onClick={() => handleDeleteService(service._id)}
+                        className="text-xs uppercase tracking-widest text-red-600">
                         Delete
                       </button>
 
