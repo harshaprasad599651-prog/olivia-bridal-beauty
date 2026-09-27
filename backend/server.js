@@ -2,10 +2,13 @@ const express = require("express");                          //importing express
 const app = express();                                       //Add express into our app
 const cors = require("cors");                                //Add cores in to our project
 const mongoose = require("mongoose");                        //add mongoose 
-require("dotenv").config();                                  //Load the dot env package
+require("dotenv").config();   
+const bcrypt = require("bcrypt");                               //Load the dot env package
 
 const Customer = require("./models/Customer");
 const Service = require("./models/Service");
+const Package = require("./models/Package");
+const Booking = require("./models/Booking")
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(()=> console.log("MongoBD Connected"))               //if connected
@@ -62,6 +65,9 @@ app.post("/api/services",async (req,res)=>{
 
 
 });
+
+
+
 
 app.get("/api/services",async(req,res)=>{
   try{
@@ -126,6 +132,128 @@ app.delete("/api/services/:id", async (req, res) => {
       message: "Failed to delete service",
       error: error.message,
     });
+  }
+});
+
+app.post("/api/packages", async (req, res) => {
+  try {
+    const packageData = await Package.create(req.body);
+
+    res.status(201).json({
+      message: "Package Created Successfully",
+      package: packageData,
+    });
+  } catch (error) {
+    console.error("Create package error:", error);
+
+    res.status(500).json({
+      message: "Failed to create package",
+      error: error.message,
+    });
+  }
+});
+
+app.get("/api/packages", async (req, res) => {
+  try {
+    const packages = await Package.find().sort({ createdAt: -1 });
+
+    res.json(packages);
+  } catch (error) {
+    console.error("Get packages error:", error);
+
+    res.status(500).json({
+      message: "Failed to get packages",
+      error: error.message,
+    });
+  }
+});
+
+app.delete("/api/packages/:id", async(req,res)=>{
+  try {
+    const packageData = await Package.findByIdAndDelete(req.params.id);
+    if (!packageData) {
+      return res.status(404).json({
+        message: "Package not found",
+      });
+    }
+    res.json({
+      message: "Package deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Package error:", error);
+
+    res.status(500).json({
+      message: "Failed to delete Package",
+      error: error.message,
+    });
+  }
+})
+
+app.put("/api/packages/:id", async (req, res) => {
+  try {
+    const packageData = await Package.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!packageData) {
+      return res.status(404).json({
+        message: "Package not found",
+      });
+    }
+
+    res.json({
+      message: "Package updated successfully",
+      package: packageData,
+    });
+  } catch (error) {
+    console.error("Update package error:", error);
+
+    res.status(500).json({
+      message: "Failed to update package",
+      error: error.message,
+    });
+  }
+});
+
+
+app.post("/api/bookings", async(req,res)=>{
+  try{
+    const booking = await Booking.create(req.body);
+    
+    res.status(201).json({
+      message:"Booking Created Successfully",
+      booking,
+    });
+
+  }catch (error){
+    console.error("Create booking error:",error);
+
+    res.status(500).json({
+      message:"Failed to create Booking",
+      error:error.message,
+    });
+  }
+});
+
+app.get("/api/bookings", async (req,res)=>{
+  try{
+    const bookings = await Booking.find();
+    
+    res.json(bookings);
+
+  }catch(error){
+    console.error("Create booking error:",error);
+
+    res.status(500).json({
+      message:"Failes to booking service",
+      error:error.message,
+    });
+
   }
 });
 

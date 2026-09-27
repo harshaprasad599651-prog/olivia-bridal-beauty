@@ -338,8 +338,8 @@ function AdminServices() {
                 </label>
 
                 <input
-                  type="text"
-                  placeholder="2 Hours"
+                  type="number"
+                  placeholder="60 minutes"
                   value = {formData.duration}
                   onChange={(e)=>
                     setFormData({
@@ -459,7 +459,7 @@ function AdminServices() {
                   </td>
 
                   <td className="px-6 py-5 text-slate-600">
-                    {service.duration}
+                    {service.duration} Minutes
                   </td>
 
                   <td className="px-6 py-5">

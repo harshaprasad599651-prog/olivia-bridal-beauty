@@ -12,6 +12,8 @@ import Footer from './components/Footer';
 import ServicesPackages from './pages/ServicesPackages';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminServices from './pages/AdminServices';
+import AdminPackages from './pages/AdminPackages';
+import Booking from './pages/Booking';
 
 function Home() {
   return (
@@ -53,6 +55,15 @@ function App() {
             </>
           }
         />
+
+        {/*Booking*/}
+        <Route
+          path="/booking"
+          element={<Booking/>}
+        />
+
+
+
         {/*Admin Dashboard*/}
         <Route
           path="/admin"
@@ -62,6 +73,11 @@ function App() {
         <Route 
           path="/admin/services"
           element={<AdminServices/>}/>
+
+        <Route 
+          path="/admin/packages" element = {<AdminPackages/>}/>
+
+        
 
       </Routes>
 

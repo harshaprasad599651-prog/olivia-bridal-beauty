@@ -30,7 +30,7 @@ const serviceSchema = new mongoose.Schema(
     },
     
     duration:{
-      type:String,
+      type:number,
       required:true,
     },
 
