@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { API_BASE_URL } from "../config";
 
 function AdminPackages() {
   const [packages, setPackages] = useState([]);
@@ -50,7 +50,7 @@ function AdminPackages() {
   
   try{
     const response = await fetch(
-      "http://localhost:5000/api/packages",
+      `${API_BASED_URL}/packages`,
       {
         method:"POST",
         headers:{
@@ -113,7 +113,7 @@ function AdminPackages() {
    
   try {
     const response = await fetch(
-      `http://localhost:5000/api/packages/${editingPackage._id}`,
+      `${API_BASED_URL}/packages/${editingPackage._id}`,
       {
         method: "PUT",
         headers: {
@@ -175,7 +175,7 @@ function AdminPackages() {
   }
   try{
     const response = await fetch(
-      `http://localhost:5000/api/packages/${id}`,
+      `${API_BASED_URL}/packages/${id}`,
       {
         method:"DELETE",
       }
@@ -202,7 +202,7 @@ function AdminPackages() {
 
   // Load packages from MongoDB
   useEffect(() => {
-    fetch("http://localhost:5000/api/packages")
+    fetch(`${API_BASED_URL}/packages`)
       .then((response) => response.json())
       .then((data) => {
         setPackages(data);

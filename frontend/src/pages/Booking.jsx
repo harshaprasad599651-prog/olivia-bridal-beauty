@@ -1,4 +1,5 @@
 import { useEffect,useState } from "react";
+import { API_BASE_URL } from "../config";
 
 
 function Booking() {
@@ -16,7 +17,7 @@ function Booking() {
   
   
   useEffect(() => {
-    fetch("http://localhost:5000/api/services")
+    fetch(`${API_BASE_URL}/services`)
       .then((response) => response.json())
       .then((data) => {
         setServices(data);

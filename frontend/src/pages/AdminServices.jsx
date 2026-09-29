@@ -1,4 +1,5 @@
 import React, { useEffect,useState } from "react";
+import { API_BASE_URL } from "../config";
 
 function AdminServices() {
   const[services,setServices] =useState([]);
@@ -18,7 +19,7 @@ function AdminServices() {
   });
 
   useEffect(()=>{
-    fetch("http://localhost:5000/api/services")
+    fetch(`${API_BASE_URL}/services`)
     .then((response)=>response.json())
     .then((data)=>{
       setServices(data);
@@ -34,7 +35,7 @@ function AdminServices() {
       return;
     }
     try{
-      const response = await fetch("http://localhost:5000/api/services",{
+      const response = await fetch(`${API_BASE_URL}/services`,{
         method:"POST",
         headers:{
           "Content-Type":"application/json",
@@ -103,7 +104,7 @@ function AdminServices() {
     }
   try {
     const response = await fetch(
-      `http://localhost:5000/api/services/${editingService._id}`,
+      `${API_BASE_URL}/services/${editingService._id}`,
       {
         method: "PUT",
         headers: {
@@ -165,7 +166,7 @@ function AdminServices() {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/services/${id}`,
+          `${API_BASE_URL}/services/${id}`,
           {
             method: "DELETE",
           }

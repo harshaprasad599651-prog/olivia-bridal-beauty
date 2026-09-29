@@ -3,12 +3,14 @@ const app = express();                                       //Add express into 
 const cors = require("cors");                                //Add cores in to our project
 const mongoose = require("mongoose");                        //add mongoose 
 require("dotenv").config();   
-const bcrypt = require("bcrypt");                               //Load the dot env package
+const bcrypt = require("bcrypt");     
+const jwt = require("jsonwebtoken");                          //Load the dot env package
 
 const Customer = require("./models/Customer");
 const Service = require("./models/Service");
 const Package = require("./models/Package");
 const Booking = require("./models/Booking")
+const authMiddleware = require("./middleware/authMiddleware");
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(()=> console.log("MongoBD Connected"))               //if connected
@@ -221,9 +223,12 @@ app.put("/api/packages/:id", async (req, res) => {
 });
 
 
-app.post("/api/bookings", async(req,res)=>{
+app.post("/api/bookings",authMiddleware, async(req,res)=>{
   try{
-    const booking = await Booking.create(req.body);
+    const booking = await Booking.create({
+      ...req.body,
+      customer:req.customerId,
+    });
     
     res.status(201).json({
       message:"Booking Created Successfully",
@@ -256,6 +261,98 @@ app.get("/api/bookings", async (req,res)=>{
 
   }
 });
+
+
+app.post("/api/register",async(req,res)=>{
+  try{
+    const{name,phone,email,password}= req.body;
+    const existingCustomer = await Customer.findOne({email});
+    if(existingCustomer){
+      return res.status(409).json({
+        message:"Email i already registered",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password,10);
+    const customer = await Customer.create({
+      name,
+      phone,
+      email,
+      password: hashedPassword,
+    });
+
+
+   
+
+    const customerData = customer.toObject();
+    delete customerData.password;
+
+    return res.status(201).json({
+      message:"Registration Successful",
+      customer:customerData,
+    });
+
+
+  }catch(error){
+    console.error("Registration error:",error);
+
+    res.status(500).json({
+      message: "Registration Failed",
+      error: error.message,
+    });
+
+  }
+});
+
+
+app.post("/api/login",async(req,res)=>{
+  try{
+    const {phone,password} = req.body;
+    const customer = await Customer.findOne({phone});
+
+    if(!customer){
+      return res.status(401).json({
+        message:"Invalid phone number or password",
+      });
+    }
+
+    const token = jwt.sign(
+      { customerId: customer._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+    );
+    
+
+    const passwordMatch = await bcrypt.compare(
+      password,
+      customer.password
+    );
+
+    if(!passwordMatch){
+      return res.status(401).json({
+        message:"Invalid phone number or password",
+      });
+    }
+
+    const customerData= customer.toObject();
+    delete customerData.password;
+
+    res.json({
+      message: "Login successful",
+      token,
+      customer: customerData,
+    });
+
+  }catch(error){
+    console.error("Login error: error");
+    res.status(500).json({
+      message:"Login failed",
+      error: error.message,
+    });
+  }
+});
+
+
 
 
 app.listen(5000);                                              //start ouer server and listen to requests coming from port 5000

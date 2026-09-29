@@ -14,6 +14,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminServices from './pages/AdminServices';
 import AdminPackages from './pages/AdminPackages';
 import Booking from './pages/Booking';
+import Login from './pages/Login'
 
 function Home() {
   return (
@@ -77,6 +78,9 @@ function App() {
         <Route 
           path="/admin/packages" element = {<AdminPackages/>}/>
 
+        <Route
+          path="/login" element = {<Login/>}/>
+        
         
 
       </Routes>
