@@ -1,13 +1,41 @@
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log("Login submitted:", phone, password);
+    try{
+    const response = await fetch(`${API_BASE_URL}/login`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+      },
+      body:JSON.stringify({
+        phone,
+        password,
+      }),
+    });
+
+    const data = await response.json();
+    if(response.ok){
+      localStorage.setItem("token",data.token);
+      localStorage.setItem("customer",JSON.stringify(data.customer));
+      navigate("/booking");
+    }else{
+      console.error(data.message);
+    }
+
+    console.log(data);
+   }catch(error){
+    console.error("Login error", error);
+   }
   };
 
   return (
@@ -74,8 +102,8 @@ function Login() {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-black-600 text-white py-3 rounded-lg 
-                       font-semibold hover:bg-pink-700 transition"
+            className="w-full bg-black-600 text-black py-3 rounded-lg 
+                       font-semibold hover:bg-black-700 transition bg-slate-600"
           >
             Login
           </button>

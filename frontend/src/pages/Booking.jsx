@@ -60,6 +60,56 @@ function Booking() {
   return total + (service ? Number(service.duration) : 0);
   }, 0);
 
+  const handleBooking = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Please login before booking.");
+    return;
+  }
+
+  if (selectedServices.length === 0) {
+    alert("Please select at least one service.");
+    return;
+  }
+
+  if (!bookingDate || !bookingTime) {
+    alert("Please select a date and time.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/bookings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        services: selectedServices,
+        packages: [],
+        bookingDateTime,
+        totalPrice,
+        totalDuration,
+        notes: "",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Booking successful:", data);
+      alert("Booking created successfully!");
+    } else {
+      console.error("Booking failed:", data);
+      alert(data.message || "Booking failed.");
+    }
+
+  } catch (error) {
+    console.error("Booking error:", error);
+    alert("Something went wrong.");
+  }
+};
   
 
 
@@ -170,6 +220,13 @@ function Booking() {
               {totalDuration % 60} minutes
             </span>
           </div> 
+          <button
+            type="button"
+            onClick={handleBooking}
+            className="mt-6 w-full bg-slate-900 text-white py-3 rounded-lg font-semibold hover:bg-slate-800"
+          >
+            Confirm Booking
+          </button>
 
           
           

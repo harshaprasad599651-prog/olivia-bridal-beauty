@@ -64,12 +64,13 @@ function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#book"
+            <Link
+              
+              to="/login"
               className="px-8 py-3 bg-slate-900 text-white text-xs uppercase tracking-[0.2em] hover:bg-slate-800 transition rounded-sm"
             >
               Book Appointment
-            </a>
+            </Link>
 
             <Link
               to ="/services"
