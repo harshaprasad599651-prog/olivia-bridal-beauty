@@ -9,8 +9,10 @@ const jwt = require("jsonwebtoken");                          //Load the dot env
 const Customer = require("./models/Customer");
 const Service = require("./models/Service");
 const Package = require("./models/Package");
-const Booking = require("./models/Booking")
+const Booking = require("./models/Booking");
+const Admin = require("./models/Admin");
 const authMiddleware = require("./middleware/authMiddleware");
+const adminMiddleware = require("./middleware/adminMiddleware");
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(()=> console.log("MongoBD Connected"))               //if connected
@@ -352,8 +354,138 @@ app.post("/api/login",async(req,res)=>{
   }
 });
 
+app.post("/api/admin/setup", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
+    const existingAdmin = await Admin.findOne({ email });
 
+    if (existingAdmin) {
+      return res.status(409).json({
+        message: "Admin already exists",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const admin = await Admin.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    const adminData = admin.toObject();
+    delete adminData.password;
+
+    res.status(201).json({
+      message: "Admin created successfully",
+      admin: adminData,
+    });
+  } catch (error) {
+    console.error("Admin setup error:", error);
+
+    res.status(500).json({
+      message: "Admin setup failed",
+      error: error.message,
+    });
+  }
+});
+
+app.post("/api/admin/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
+      return res.status(401).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, admin.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        adminId: admin._id,
+        role: "admin",
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+    );
+
+    const adminData = admin.toObject();
+    delete adminData.password;
+
+    res.json({
+      message: "Admin login successful",
+      token,
+      admin: adminData,
+    });
+  } catch (error) {
+    console.error("Admin login error:", error);
+
+    res.status(500).json({
+      message: "Admin login failed",
+      error: error.message,
+    });
+  }
+});
+
+app.get("/api/admin/test", adminMiddleware, (req, res) => {
+  res.json({
+    message: "Admin authentication successful",
+    adminId: req.adminId,
+  });
+});
+
+app.get("/api/admin/dashboard", adminMiddleware, async (req, res) => {
+  try {
+    const customerCount = await Customer.countDocuments();
+    const serviceCount = await Service.countDocuments();
+    const packageCount = await Package.countDocuments();
+    const bookingCount = await Booking.countDocuments();
+    const pendingBookingCount = await Booking.countDocuments({
+      status: "Pending",
+    });
+
+    res.json({
+      customers: customerCount,
+      services: serviceCount,
+      packages: packageCount,
+      bookings: bookingCount,
+      pendingBookings: pendingBookingCount,
+    });
+  } catch (error) {
+    console.error("Dashboard stats error:", error);
+
+    res.status(500).json({
+      message: "Failed to load dashboard statistics",
+    });
+  }
+});
+
+app.get("/api/admin/customers", adminMiddleware, async (req, res) => {
+  try {
+    const customers = await Customer.find()
+      .select("-password")
+      .sort({ createdAt: -1 });
+
+    res.json(customers);
+  } catch (error) {
+    console.error("Get customers error:", error);
+
+    res.status(500).json({
+      message: "Failed to load customers",
+    });
+  }
+});
 
 app.listen(5000);                                              //start ouer server and listen to requests coming from port 5000
 

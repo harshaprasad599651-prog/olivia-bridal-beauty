@@ -50,7 +50,7 @@ function AdminPackages() {
   
   try{
     const response = await fetch(
-      `${API_BASED_URL}/packages`,
+      `${API_BASE_URL}/packages`,
       {
         method:"POST",
         headers:{
@@ -113,7 +113,7 @@ function AdminPackages() {
    
   try {
     const response = await fetch(
-      `${API_BASED_URL}/packages/${editingPackage._id}`,
+      `${API_BASE_URL}/packages/${editingPackage._id}`,
       {
         method: "PUT",
         headers: {
@@ -175,7 +175,7 @@ function AdminPackages() {
   }
   try{
     const response = await fetch(
-      `${API_BASED_URL}/packages/${id}`,
+      `${API_BASE_URL}/packages/${id}`,
       {
         method:"DELETE",
       }
@@ -202,7 +202,7 @@ function AdminPackages() {
 
   // Load packages from MongoDB
   useEffect(() => {
-    fetch(`${API_BASED_URL}/packages`)
+    fetch(`${API_BASE_URL}/packages`)
       .then((response) => response.json())
       .then((data) => {
         setPackages(data);
@@ -213,7 +213,7 @@ function AdminPackages() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-slate-50 p-6 pb-6 pt-52 md:pt-40">
       <div className="max-w-7xl mx-auto">
 
         {/* Page Header */}

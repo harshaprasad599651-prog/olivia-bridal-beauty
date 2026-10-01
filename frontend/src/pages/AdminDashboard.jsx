@@ -1,6 +1,44 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
+import {API_BASE_URL} from "../config";
+import { Link } from "react-router-dom";
+
+
+
+
+
+
 
 function AdminDashboard() {
+
+  const [stats, setStats] = useState({
+  customers: 0,
+  services: 0,
+  packages: 0,
+  bookings: 0,
+  pendingBookings: 0,
+  });
+
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  fetch(`${API_BASE_URL}/admin/dashboard`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      setStats(data);
+    })
+    .catch((error) => {
+      console.error("Error loading dashboard statistics:", error);
+    });
+  } , []);
+
+
+
+
+
   return (
     <div className="min-h-screen bg-slate-50">
 
@@ -47,12 +85,28 @@ function AdminDashboard() {
             </p>
 
             <h3 className="text-3xl font-serif mt-3">
-              0
+              {stats.services}
             </h3>
 
-            <button className="mt-5 text-xs uppercase tracking-[0.2em]">
-              Manage Services →
+            <Link to="/admin/services">
+
+             <button
+            className="mt-5 inline-flex items-center gap-2
+             text-xs uppercase tracking-[0.2em]
+             text-slate-300
+             border border-slate-900
+             bg-slate-900
+             px-4 py-2.5
+             rounded-md
+             transition-all duration-300
+             hover:bg-slate-300
+             hover:text-slate-900
+             hover:border-slate-300"
+            >
+              Manage Services
+              <span className="text-sm"></span>
             </button>
+            </Link>
           </div>
 
 
@@ -62,12 +116,28 @@ function AdminDashboard() {
             </p>
 
             <h3 className="text-3xl font-serif mt-3">
-              0
+              {stats.packages}
             </h3>
 
-            <button className="mt-5 text-xs uppercase tracking-[0.2em]">
-              Manage Packages →
+            <Link to ="/admin/packages">
+
+             <button
+            className="mt-5 inline-flex items-center gap-2
+             text-xs uppercase tracking-[0.2em]
+             text-slate-300
+             border border-slate-900
+             bg-slate-900
+             px-4 py-2.5
+             rounded-md
+             transition-all duration-300
+             hover:bg-slate-300
+             hover:text-slate-900
+             hover:border-slate-300"
+            >
+              Manage Packages
+              <span className="text-sm"></span>
             </button>
+            </Link>
           </div>
 
 
@@ -77,12 +147,57 @@ function AdminDashboard() {
             </p>
 
             <h3 className="text-3xl font-serif mt-3">
-              0
+              {stats.bookings}
             </h3>
 
-            <button className="mt-5 text-xs uppercase tracking-[0.2em]">
-              Manage Bookings →
+            
+
+            <button
+            className="mt-5 inline-flex items-center gap-2
+             text-xs uppercase tracking-[0.2em]
+             text-slate-300
+             border border-slate-900
+             bg-slate-900
+             px-4 py-2.5
+             rounded-md
+             transition-all duration-300
+             hover:bg-slate-300
+             hover:text-slate-900
+             hover:border-slate-300"
+            >
+              Manage Bookings
+              <span className="text-sm"></span>
             </button>
+          </div>
+
+           <div className="bg-white border border-slate-200 p-6">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+              customers
+            </p>
+
+            <h3 className="text-3xl font-serif mt-3">
+              {stats.customers}
+            </h3>
+
+            <Link to ="/adminCustomers">
+
+            <button
+            className="mt-5 inline-flex items-center gap-2
+                text-xs uppercase tracking-[0.2em]
+                text-slate-300
+                border border-slate-900
+                bg-slate-900
+                px-4 py-2.5
+                rounded-md
+                transition-all duration-300
+                hover:bg-slate-300
+                hover:text-slate-900
+                hover:border-slate-300"
+                type="button"
+            >
+              Manage Customers
+            </button>
+            </Link>
           </div>
 
         </div>

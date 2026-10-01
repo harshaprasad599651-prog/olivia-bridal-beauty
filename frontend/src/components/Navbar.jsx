@@ -1,148 +1,360 @@
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  const navigate = useNavigate();
+
+  // Check whether customer is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("token")
+  );
+
+  // =========================
+  // AUTHENTICATION STATUS
+  // =========================
+  useEffect(() => {
+    const checkLogin = () => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+
+    // For changes from another browser tab
+    window.addEventListener("storage", checkLogin);
+
+    // For login/logout changes in the current tab
+    window.addEventListener("authChanged", checkLogin);
+
+    return () => {
+      window.removeEventListener("storage", checkLogin);
+      window.removeEventListener("authChanged", checkLogin);
+    };
+  }, []);
+
+  // =========================
+  // SCROLL EFFECT
+  // =========================
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
+  // =========================
+  // BOOKING BUTTON
+  // =========================
+  const handleBookingClick = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/booking");
+    } else {
+      navigate("/login");
+    }
+
+    setIsOpen(false);
+  };
+
+  // =========================
+  // LOGOUT
+  // =========================
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("customer");
+
+    setIsLoggedIn(false);
+    setIsOpen(false);
+
+    // Tell other components that authentication changed
+    window.dispatchEvent(new Event("authChanged"));
+
+    navigate("/");
+  };
+
+  // =========================
+  // NAVIGATION LINKS
+  // =========================
   const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Gallery", href: "#gallery" },
-    { name: "Contact", href: "#contact" },
+    {
+      name: "Home",
+      href: "/",
+    },
+    {
+      name: "About",
+      href: "/#about",
+    },
+    {
+      name: "Gallery",
+      href: "/#gallery",
+    },
+    {
+      name: "Contact",
+      href: "/#contact",
+    },
   ];
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 font-serif tracking-wide selection:bg-slate-100 selection:text-slate-900">
-      
-      {/* 1. Top Utility Bar — Crisp White Translucent Finish */}
-      <div className="bg-white/90 backdrop-blur-md text-slate-500 text-[10px] uppercase tracking-[0.25em] py-2 px-8 border-b border-gray-100">
+    <header className="fixed top-0 left-0 w-full z-50 font-serif tracking-wide selection:bg-rose-100 selection:text-slate-900 transition-all duration-300">
+
+      {/* =====================================================
+          TOP UTILITY BAR
+      ====================================================== */}
+      <div className="bg-slate-900 text-slate-300 text-[10px] uppercase tracking-[0.25em] py-2.5 px-6 sm:px-8 border-b border-slate-800">
+
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          
-          {/* Contact Details */}
+
+          {/* Phone Contact */}
           <div className="flex items-center space-x-6">
+
             <a
               href="tel:+1234567890"
-              className="flex items-center space-x-2 text-slate-500 hover:text-slate-900 transition-colors duration-300"
+              className="flex items-center space-x-2 text-slate-300 hover:text-amber-200 transition-colors duration-300 font-sans"
             >
-              <svg className="w-3 h-3 fill-current text-slate-400" viewBox="0 0 24 24">
+              <svg
+                className="w-3 h-3 fill-current text-amber-200/80"
+                viewBox="0 0 24 24"
+              >
                 <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
               </svg>
-              <span className="font-light">+1 (234) 567-890</span>
+
+              <span className="font-light tracking-widest">
+                +1 (234) 567-890
+              </span>
             </a>
-            <span className="hidden md:inline text-gray-200">•</span>
-            <span className="hidden md:inline font-extralight tracking-[0.3em] text-slate-400">
+
+            <span className="hidden md:inline text-slate-700">
+              •
+            </span>
+
+            <span className="hidden md:inline font-sans text-[9px] tracking-[0.3em] text-slate-400 uppercase">
               Haute Couture Bridal & Beauty
             </span>
+
           </div>
 
-          {/* Social / Tagline */}
+          {/* Status Tagline */}
           <div className="flex items-center space-x-4">
-            <span className="text-[9px] text-slate-500 font-medium tracking-[0.3em]">
-              BY APPOINTMENT ONLY
+
+            <span className="text-[9px] text-amber-200/90 font-sans tracking-[0.3em] uppercase font-light">
+              By Appointment Only
             </span>
+
           </div>
+
         </div>
+
       </div>
 
-      {/* 2. Main Luxury Translucent Navigation Bar */}
+
+      {/* =====================================================
+          MAIN NAVIGATION BAR
+      ====================================================== */}
       <nav
-        className={`w-full bg-white/80 backdrop-blur-xl border-b border-gray-100 transition-all duration-500 ${
-          scrolled ? "py-3 shadow-lg shadow-gray-200/40" : "py-6"
+        className={`w-full bg-white/90 backdrop-blur-md border-b border-stone-200/60 transition-all duration-500 ${
+          scrolled
+            ? "py-3.5 shadow-md shadow-stone-900/5"
+            : "py-5"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
-          
-          {/* Brand Logo with Soft Charcoal Gradient */}
-          <a href="#" className="flex flex-col group">
-            <h1 className="text-2xl sm:text-3xl font-serif tracking-[0.15em] font-light bg-gradient-to-r from-slate-800 via-slate-600 to-slate-900 bg-clip-text text-transparent group-hover:from-slate-600 group-hover:to-slate-900 transition-all duration-500 uppercase">
+
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 flex items-center justify-between">
+
+          {/* =================================================
+              LOGO
+          ================================================== */}
+          <Link
+            to="/"
+            className="flex flex-col group focus:outline-none"
+          >
+
+            <h1 className="text-2xl sm:text-3xl font-serif tracking-[0.2em] font-normal text-slate-900 group-hover:text-amber-900 transition-colors duration-500 uppercase">
               Olivia
             </h1>
-            <p className="text-[8px] tracking-[0.45em] font-light text-slate-400 uppercase -mt-0.5">
+
+            <p className="text-[8px] tracking-[0.5em] font-sans font-light text-stone-400 uppercase -mt-0.5">
               Bridal & Beauty
             </p>
-          </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10">
+          </Link>
+
+
+          {/* =================================================
+              DESKTOP NAVIGATION LINKS
+          ================================================== */}
+          <div className="hidden lg:flex items-center space-x-8">
+
             {navLinks.map((link, index) => (
               <React.Fragment key={link.name}>
-                <a
-                  href={link.href}
-                  className="font-sans text-[11px] uppercase tracking-[0.25em] text-slate-500 hover:text-slate-900 transition-all duration-300 relative py-1 group"
+
+                <Link
+                  to={link.href}
+                  className="font-sans text-[11px] uppercase tracking-[0.25em] text-slate-600 hover:text-slate-900 transition-all duration-300 relative py-1 group"
                 >
                   {link.name}
-                  {/* Subtle Expanding Slate Line under links */}
-                  <span className="absolute bottom-0 left-1/2 w-0 h-[1px] bg-slate-400 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
-                </a>
-                {/* Minimal Accent Dot between items */}
+
+                  <span className="absolute bottom-0 left-1/2 w-0 h-[1px] bg-slate-900 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+                </Link>
+
                 {index < navLinks.length - 1 && (
-                  <span className="w-1 h-1 rounded-full bg-gray-200"></span>
+                  <span className="w-1 h-1 rounded-full bg-stone-300"></span>
                 )}
+
               </React.Fragment>
             ))}
+
           </div>
 
-          {/* Minimalist Chic CTA Button */}
-          <div className="hidden md:block">
-            <a
-              href="#book"
-              className="inline-flex items-center justify-center text-[10px] font-sans uppercase tracking-[0.25em] font-semibold rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-500 px-7 py-2.5 hover:-translate-y-[1px]"
+
+          {/* =================================================
+              DESKTOP RIGHT ACTION AREA
+          ================================================== */}
+          <div className="hidden md:flex items-center space-x-6">
+
+            {/* LOGIN / LOGOUT */}
+            {!isLoggedIn ? (
+
+              <Link
+                to="/login"
+                className="font-sans text-[11px] uppercase tracking-[0.25em] text-slate-600 hover:text-slate-900 transition-colors duration-300 relative py-1 group"
+              >
+                Login
+
+                <span className="absolute bottom-0 left-1/2 w-0 h-[1px] bg-slate-900 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+              </Link>
+
+            ) : (
+
+              <button
+                onClick={handleLogout}
+                className="font-sans text-[11px] uppercase tracking-[0.25em] text-stone-500 hover:text-rose-900 transition-colors duration-300"
+              >
+                Logout
+              </button>
+
+            )}
+
+
+            {/* RESERVE DATE */}
+            <button
+              onClick={handleBookingClick}
+              className="inline-flex items-center justify-center text-[10px] font-sans uppercase tracking-[0.25em] font-medium rounded-full bg-slate-900 border border-slate-900 text-stone-100 hover:bg-stone-800 hover:border-stone-800 shadow-sm hover:shadow-md transition-all duration-300 px-6 py-2.5 hover:-translate-y-[1px]"
             >
               Reserve Date
-            </a>
+            </button>
+
           </div>
 
-          {/* Mobile Menu Button */}
+
+          {/* =================================================
+              MOBILE MENU TOGGLE
+          ================================================== */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-slate-800 focus:outline-none p-2"
+            className="md:hidden text-slate-900 focus:outline-none p-2"
             aria-label="Toggle Menu"
           >
+
             {isOpen ? (
-              <span className="text-xl font-light">✕</span>
+
+              <span className="text-2xl font-light text-slate-900">
+                ✕
+              </span>
+
             ) : (
+
               <div className="space-y-1.5 w-6">
-                <span className="block w-full h-[1px] bg-slate-800"></span>
-                <span className="block w-2/3 h-[1px] bg-slate-800 ml-auto"></span>
-                <span className="block w-full h-[1px] bg-slate-800"></span>
+
+                <span className="block w-full h-[1px] bg-slate-900"></span>
+
+                <span className="block w-2/3 h-[1px] bg-slate-900 ml-auto"></span>
+
+                <span className="block w-full h-[1px] bg-slate-900"></span>
+
               </div>
+
             )}
+
           </button>
+
         </div>
 
-        {/* Mobile Dropdown Panel */}
+
+        {/* =====================================================
+            MOBILE MENU DRAWER
+        ====================================================== */}
         {isOpen && (
-          <div className="md:hidden bg-white/95 backdrop-blur-2xl border-t border-gray-100 px-8 py-8 space-y-5 shadow-2xl">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="block font-sans text-xs uppercase tracking-[0.3em] font-light text-slate-500 hover:text-slate-900 transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
-            <div className="pt-4 border-t border-gray-100">
-              <a
-                href="#book"
-                onClick={() => setIsOpen(false)}
-                className="block text-center font-sans bg-slate-900 text-white text-xs uppercase tracking-[0.25em] font-medium py-3.5 rounded-full shadow-lg shadow-slate-200 hover:bg-slate-800 transition-colors"
+
+          <div className="md:hidden bg-white/98 backdrop-blur-2xl border-t border-stone-100 px-8 py-8 space-y-6 shadow-xl">
+
+            {/* Navigation Links */}
+            <div className="space-y-4">
+
+              {navLinks.map((link) => (
+
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block font-sans text-xs uppercase tracking-[0.3em] font-light text-slate-700 hover:text-slate-900 transition-colors py-1"
+                >
+                  {link.name}
+                </Link>
+
+              ))}
+
+            </div>
+
+
+            {/* Login / Logout + Booking */}
+            <div className="pt-6 border-t border-stone-100 space-y-4">
+
+              {/* LOGIN */}
+              {!isLoggedIn ? (
+
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center font-sans text-xs uppercase tracking-[0.25em] text-slate-700 hover:text-slate-900 py-2"
+                >
+                  Login
+                </Link>
+
+              ) : (
+
+                /* LOGOUT */
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-center font-sans text-xs uppercase tracking-[0.25em] text-rose-800 py-2"
+                >
+                  Logout
+                </button>
+
+              )}
+
+
+              {/* RESERVE DATE */}
+              <button
+                onClick={handleBookingClick}
+                className="w-full block text-center font-sans bg-slate-900 text-stone-100 text-xs uppercase tracking-[0.25em] font-medium py-3.5 rounded-full shadow-md hover:bg-stone-800 transition-colors"
               >
                 Reserve Date
-              </a>
+              </button>
+
             </div>
+
           </div>
+
         )}
+
       </nav>
+
     </header>
   );
 }

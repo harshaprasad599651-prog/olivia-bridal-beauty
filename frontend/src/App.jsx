@@ -1,26 +1,27 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Gallery from './components/Gallery';
-import WhyChooseUs from './components/WhyChooseUs';
-import Testimonials from './components/Testimonials';
-import BookingCTA from './components/BookingCTA';
-import Footer from './components/Footer';
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import About from "./components/About";
+import Gallery from "./components/Gallery";
+import WhyChooseUs from "./components/WhyChooseUs";
+import Testimonials from "./components/Testimonials";
+import BookingCTA from "./components/BookingCTA";
+import Footer from "./components/Footer";
 
-import ServicesPackages from './pages/ServicesPackages';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminServices from './pages/AdminServices';
-import AdminPackages from './pages/AdminPackages';
-import Booking from './pages/Booking';
-import Login from './pages/Login'
+import ServicesPackages from "./pages/ServicesPackages";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminServices from "./pages/AdminServices";
+import AdminPackages from "./pages/AdminPackages";
+import Booking from "./pages/Booking";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import AdminCustomers from "./pages/AdminCustomers";
+
 
 function Home() {
   return (
     <>
-      <Navbar />
-
       <main>
         <Hero />
         <About />
@@ -40,48 +41,79 @@ function App() {
   return (
     <BrowserRouter>
 
+      {/* Customer/Public Navigation */}
+      <Navbar />
+
       <Routes>
 
+        {/* =========================
+            CUSTOMER / PUBLIC PAGES
+        ========================== */}
+
         {/* Homepage */}
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
         {/* Services & Packages */}
         <Route
           path="/services"
-          element={
-            <>
-              <Navbar />
-              <ServicesPackages />
-              <Footer />
-            </>
-          }
+          element={<ServicesPackages />}
         />
 
-        {/*Booking*/}
+        {/* Booking */}
         <Route
           path="/booking"
-          element={<Booking/>}
+          element={<Booking />}
+        />
+
+        {/* Login */}
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        {/* Register */}
+        <Route
+          path="/register"
+          element={<Register />}
         />
 
 
+        {/* =========================
+            ADMIN PAGES
+        ========================== */}
 
-        {/*Admin Dashboard*/}
+        {/* Admin Dashboard */}
         <Route
           path="/admin"
-          element={<AdminDashboard/>}/>
+          element={<AdminDashboard />}
+        />
 
-        {/*Admin Services*/}
-        <Route 
-          path="/admin/services"
-          element={<AdminServices/>}/>
-
-        <Route 
-          path="/admin/packages" element = {<AdminPackages/>}/>
-
+        {/* Admin Dashboard */}
         <Route
-          path="/login" element = {<Login/>}/>
-        
-        
+          path="/admin/dashboard"
+          element={<AdminDashboard />}
+        />
+
+        {/* Admin Services */}
+        <Route
+          path="/admin/services"
+          element={<AdminServices />}
+        />
+
+        {/* Admin Packages */}
+        <Route
+          path="/admin/packages"
+          element={<AdminPackages />}
+        />
+
+        {/* Admin Customers */}
+        <Route
+          path="/adminCustomers"
+          element={<AdminCustomers />}
+        />
 
       </Routes>
 
