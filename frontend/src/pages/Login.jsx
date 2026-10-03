@@ -43,13 +43,20 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("token", data.token);
-
+        // ================= CUSTOMER LOGIN =================
         if (loginType === "customer") {
+          localStorage.setItem(
+            "customerToken",
+            data.token
+          );
+
           localStorage.setItem(
             "customer",
             JSON.stringify(data.customer)
           );
+
+          // Remove old shared token
+          localStorage.removeItem("token");
 
           // Update navbar login state
           window.dispatchEvent(new Event("authChanged"));
@@ -59,11 +66,22 @@ function Login() {
 
           // Show success dialog
           setShowSuccess(true);
-        } else {
+        }
+
+        // ================= ADMIN LOGIN =================
+        else {
+          localStorage.setItem(
+            "adminToken",
+            data.token
+          );
+
           localStorage.setItem(
             "admin",
             JSON.stringify(data.admin)
           );
+
+          // Remove old shared token
+          localStorage.removeItem("token");
 
           // Get admin's name
           setLoggedInUser(data.admin.name);
@@ -167,7 +185,7 @@ function Login() {
                   ? "Enter your phone number"
                   : "Enter your email"
               }
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg 
                          focus:outline-none focus:ring-2 focus:ring-slate-400"
               required
             />
@@ -186,7 +204,7 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg 
                          focus:outline-none focus:ring-2 focus:ring-slate-400"
               required
             />
@@ -196,7 +214,7 @@ function Login() {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-slate-900 text-white py-3 rounded-lg
+            className="w-full bg-slate-900 text-white py-3 rounded-lg 
                        font-semibold hover:bg-slate-800 transition"
           >
             Login
@@ -258,8 +276,8 @@ function Login() {
             <button
               type="button"
               onClick={handleSuccessOk}
-              className="mt-7 w-full py-3 bg-slate-900 text-white
-                         text-xs uppercase tracking-[0.25em]
+              className="mt-7 w-full py-3 bg-slate-900 text-white 
+                         text-xs uppercase tracking-[0.25em] 
                          rounded-md hover:bg-slate-800 transition"
             >
               Continue

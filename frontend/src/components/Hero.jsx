@@ -130,6 +130,13 @@ function Hero() {
               Our Services
             </Link>
 
+            <button
+              onClick={() => navigate("/my-bookings")}
+              className="px-8 py-3 bg-white/90 text-slate-900 text-xs uppercase tracking-[0.2em] hover:bg-white transition rounded-sm"
+            >
+              My Bookings
+            </button>
+
           </div>
 
         </div>

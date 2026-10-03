@@ -1,6 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
+
+import CustomerLayout from "./components/customer/CustomerLayout";
+import AdminLayout from "./components/admin/AdminLayout";
+
+
 import Hero from "./components/Hero";
 import About from "./components/About";
 import Gallery from "./components/Gallery";
@@ -9,14 +13,19 @@ import Testimonials from "./components/Testimonials";
 import BookingCTA from "./components/BookingCTA";
 import Footer from "./components/Footer";
 
-import ServicesPackages from "./pages/ServicesPackages";
+
+
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminServices from "./pages/AdminServices";
 import AdminPackages from "./pages/AdminPackages";
+import AdminCustomers from "./pages/AdminCustomers";
+import AdminBookings from "./pages/AdminBookings";
+
+import ServicesPackages from "./pages/ServicesPackages";
 import Booking from "./pages/Booking";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import AdminCustomers from "./pages/AdminCustomers";
+import MyBookings from "./pages/MyBookings"
 
 
 function Home() {
@@ -41,8 +50,7 @@ function App() {
   return (
     <BrowserRouter>
 
-      {/* Customer/Public Navigation */}
-      <Navbar />
+      
 
       <Routes>
 
@@ -53,7 +61,11 @@ function App() {
         {/* Homepage */}
         <Route
           path="/"
-          element={<Home />}
+          element={
+          <CustomerLayout>
+          <Home/>
+          </CustomerLayout>
+          }
         />
 
         {/* Services & Packages */}
@@ -85,35 +97,62 @@ function App() {
             ADMIN PAGES
         ========================== */}
 
-        {/* Admin Dashboard */}
-        <Route
-          path="/admin"
-          element={<AdminDashboard />}
-        />
+       
+          <Route
+            path="/admin"
+            element={
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            }
+          />
 
-        {/* Admin Dashboard */}
-        <Route
-          path="/admin/dashboard"
-          element={<AdminDashboard />}
-        />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            }
+          />
 
-        {/* Admin Services */}
-        <Route
-          path="/admin/services"
-          element={<AdminServices />}
-        />
+          <Route
+            path="/admin/services"
+            element={
+              <AdminLayout>
+                <AdminServices />
+              </AdminLayout>
+            }
+          />
 
-        {/* Admin Packages */}
-        <Route
-          path="/admin/packages"
-          element={<AdminPackages />}
-        />
+          <Route
+            path="/admin/packages"
+            element={
+              <AdminLayout>
+                <AdminPackages />
+              </AdminLayout>
+            }
+          />
 
-        {/* Admin Customers */}
-        <Route
-          path="/adminCustomers"
-          element={<AdminCustomers />}
-        />
+          <Route
+            path="/admin/bookings"
+            element={
+              <AdminLayout>
+                <AdminBookings />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="/adminCustomers"
+            element={
+              <AdminLayout>
+                <AdminCustomers />
+              </AdminLayout>
+            }
+          />
+
+          <Route path="/my-bookings" element={<MyBookings />} />
 
       </Routes>
 

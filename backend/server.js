@@ -487,5 +487,139 @@ app.get("/api/admin/customers", adminMiddleware, async (req, res) => {
   }
 });
 
+app.get("/api/admin/bookings", adminMiddleware, async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate({
+        path: "customer",
+        select: "name phone email",
+        model: Customer,
+      })
+      .populate({
+        path: "services",
+        select: "name category price duration",
+        model: Service,
+      })
+      .populate({
+        path: "packages",
+        select: "name price duration",
+        model: Package,
+      })
+      .sort({ bookingDateTime: 1 });
+
+    
+
+    res.json(bookings);
+  } catch (error) {
+    console.error("Get admin bookings error:", error);
+
+    res.status(500).json({
+      message: "Failed to load bookings",
+    });
+  }
+});
+
+app.put("/api/admin/bookings/:id/status", adminMiddleware, async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const allowedStatuses = ["Pending", "Confirmed", "Completed", "Cancelled"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid booking status",
+      });
+    }
+
+    const booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true },
+    )
+      .populate({
+        path: "customer",
+        select: "name phone email",
+        model: Customer,
+      })
+      .populate({
+        path: "services",
+        select: "name category price duration",
+        model: Service,
+      })
+      .populate({
+        path: "packages",
+        select: "name price duration",
+        model: Package,
+      });
+
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    res.json({
+      message: "Booking status updated successfully",
+      booking,
+    });
+  } catch (error) {
+    console.error("Update booking status error:", error);
+
+    res.status(500).json({
+      message: "Failed to update booking status",
+      error: error.message,
+    });
+  }
+});
+
+app.delete("/api/admin/bookings/:id", adminMiddleware, async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndDelete(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    res.json({
+      message: "Booking removed successfully",
+    });
+  } catch (error) {
+    console.error("Remove booking error:", error);
+
+    res.status(500).json({
+      message: "Failed to remove booking",
+    });
+  }
+});
+
+app.get("/api/bookings/my", authMiddleware, async (req, res) => {
+  try {
+    const bookings = await Booking.find({
+      customer: req.customerId,
+    })
+      .populate({
+        path: "services",
+        select: "name category price duration",
+        model: Service,
+      })
+      .populate({
+        path: "packages",
+        select: "name price duration",
+        model: Package,
+      })
+      .sort({ bookingDateTime: -1 });
+
+    res.json(bookings);
+  } catch (error) {
+    console.error("Get my bookings error:", error);
+
+    res.status(500).json({
+      message: "Failed to load bookings",
+    });
+  }
+});
+
 app.listen(5000);                                              //start ouer server and listen to requests coming from port 5000
 
