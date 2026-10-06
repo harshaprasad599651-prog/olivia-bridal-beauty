@@ -154,7 +154,7 @@ function Booking() {
   // CONFIRM BOOKING
   // =========================
   const handleBooking = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("customerToken");
 
     if (!token) {
       showModal({

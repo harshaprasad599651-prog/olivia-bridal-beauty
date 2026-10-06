@@ -35,6 +35,23 @@ function MyBookings() {
 
   return (
     <div className="min-h-screen pt-32 px-6">
+      {/* Dynamic Keyframes for smooth drop-in transition */}
+      <style>{`
+        @keyframes dropIn {
+          0% {
+            opacity: 0;
+            transform: translateY(-30px) scale(0.97);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        .animate-drop-in {
+          animation: dropIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}</style>
+
       <h1 className="text-3xl font-semibold text-slate-900">
         My Bookings
       </h1>
@@ -49,10 +66,11 @@ function MyBookings() {
         </p>
       ) : (
         <div className="mt-8 space-y-4">
-          {bookings.map((booking) => (
+          {bookings.map((booking, index) => (
             <div
               key={booking._id}
-              className="bg-white border border-slate-200 rounded-xl p-6"
+              className="bg-white border border-slate-200 rounded-xl p-6 transition-all duration-300 hover:shadow-lg animate-drop-in opacity-0"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-slate-900">

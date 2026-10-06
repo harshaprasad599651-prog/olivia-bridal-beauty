@@ -19,7 +19,7 @@ function AdminDashboard() {
   });
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
 
   fetch(`${API_BASE_URL}/admin/dashboard`, {
     headers: {
@@ -150,9 +150,10 @@ function AdminDashboard() {
               {stats.bookings}
             </h3>
 
-            
+            <Link to ="/admin/bookings">
 
             <button
+            
             className="mt-5 inline-flex items-center gap-2
              text-xs uppercase tracking-[0.2em]
              text-slate-300
@@ -168,6 +169,7 @@ function AdminDashboard() {
               Manage Bookings
               <span className="text-sm"></span>
             </button>
+            </Link>
           </div>
 
            <div className="bg-white border border-slate-200 p-6">

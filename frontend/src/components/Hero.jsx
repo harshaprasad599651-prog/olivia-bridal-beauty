@@ -44,7 +44,7 @@ function Hero() {
   // BOOKING BUTTON
   // =========================
   const handleBookingClick = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("customerToken");
 
     if (token) {
       navigate("/booking");

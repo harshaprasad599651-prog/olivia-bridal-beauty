@@ -13,7 +13,7 @@ function AdminCustomers() {
   // Load customers
   useEffect(() => {
     const fetchCustomers = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("adminToken");
 
       if (!token) {
         setError("Authentication required.");

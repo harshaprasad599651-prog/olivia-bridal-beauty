@@ -110,8 +110,10 @@ function Login() {
   };
 
   return (
+    
+    
     <div className="min-h-screen flex items-center justify-center bg-pink-50 px-4">
-
+      
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
 
         {/* Logo / Title */}
@@ -219,6 +221,17 @@ function Login() {
           >
             Login
           </button>
+
+          <button
+            type="button"
+            onClick={()=> navigate("/")}
+            className="w-full bg-white text-red-600 py-3 rounded-lg 
+                       font-semibold hover:bg-slate-800 transition border border-red-400"
+          >
+            Cancel
+          </button>
+
+          
 
         </form>
 

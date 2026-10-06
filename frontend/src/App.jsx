@@ -13,6 +13,7 @@ import Testimonials from "./components/Testimonials";
 import BookingCTA from "./components/BookingCTA";
 import Footer from "./components/Footer";
 
+import CustomerProtectedRoute from "./components/customer/CustomerProtectedRoute";
 
 
 import AdminDashboard from "./pages/AdminDashboard";
@@ -77,7 +78,19 @@ function App() {
         {/* Booking */}
         <Route
           path="/booking"
-          element={<Booking />}
+          element={
+            <CustomerProtectedRoute>
+              <Booking />
+            </CustomerProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-bookings"
+          element={
+            <CustomerProtectedRoute>
+              <MyBookings />
+            </CustomerProtectedRoute>
+          }
         />
 
         {/* Login */}
@@ -152,7 +165,6 @@ function App() {
             }
           />
 
-          <Route path="/my-bookings" element={<MyBookings />} />
 
       </Routes>
 

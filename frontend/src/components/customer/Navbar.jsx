@@ -9,7 +9,7 @@ function Navbar() {
 
   // Check whether customer is logged in
   const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem("token")
+    !!localStorage.getItem("customerToken")
   );
 
   // =========================
@@ -17,7 +17,7 @@ function Navbar() {
   // =========================
   useEffect(() => {
     const checkLogin = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
+      setIsLoggedIn(!!localStorage.getItem("customerToken"));
     };
 
     // For changes from another browser tab
@@ -51,7 +51,7 @@ function Navbar() {
   // BOOKING BUTTON
   // =========================
   const handleBookingClick = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("customerToken");
 
     if (token) {
       navigate("/booking");
@@ -66,7 +66,7 @@ function Navbar() {
   // LOGOUT
   // =========================
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("customerToken");
     localStorage.removeItem("customer");
 
     setIsLoggedIn(false);

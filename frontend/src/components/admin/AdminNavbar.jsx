@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function AdminNavbar() {
   const navigate = useNavigate();
@@ -16,6 +16,26 @@ function AdminNavbar() {
         <div className="h-20 flex items-center justify-between">
 
           {/* Logo */}
+
+          {location.pathname!=="/admin/dashboard" && location.pathname!=="/admin" && (
+          <button
+            type="button"
+            onClick={()=>navigate("../admin/dashboard") }
+            className="text-xs uppercase tracking-[0.15em]
+                       border border-slate-300
+                       px-4 py-2.5
+                       rounded-md
+                       text-slate-700
+                       hover:bg-slate-900
+                       hover:text-white
+                       hover:border-slate-900
+                       transition"
+          >
+            Home
+          </button>
+
+          )}
+          
           <button
             type="button"
             onClick={() => navigate("/admin/dashboard")}
@@ -69,6 +89,7 @@ function AdminNavbar() {
             </button>
 
           </nav>
+          
 
           {/* Logout */}
           <button
