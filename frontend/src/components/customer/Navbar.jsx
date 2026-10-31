@@ -199,7 +199,7 @@ function Navbar() {
                 >
                   {link.name}
 
-                  <span className="absolute bottom-0 left-1/2 w-0 h-[1px] bg-slate-900 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+                  <span className="absolute bottom-0 left-1/2 w-0 h-px bg-slate-900 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
                 </Link>
 
                 {index < navLinks.length - 1 && (
@@ -226,7 +226,7 @@ function Navbar() {
               >
                 Login
 
-                <span className="absolute bottom-0 left-1/2 w-0 h-[1px] bg-slate-900 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+                <span className="absolute bottom-0 left-1/2 w-0 h-px bg-slate-900 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
               </Link>
 
             ) : (
@@ -244,7 +244,7 @@ function Navbar() {
             {/* RESERVE DATE */}
             <button
               onClick={handleBookingClick}
-              className="inline-flex items-center justify-center text-[10px] font-sans uppercase tracking-[0.25em] font-medium rounded-full bg-slate-900 border border-slate-900 text-stone-100 hover:bg-stone-800 hover:border-stone-800 shadow-sm hover:shadow-md transition-all duration-300 px-6 py-2.5 hover:-translate-y-[1px]"
+              className="inline-flex items-center justify-center text-[10px] font-sans uppercase tracking-[0.25em] font-medium rounded-full bg-slate-900 border border-slate-900 text-stone-100 hover:bg-stone-800 hover:border-stone-800 shadow-sm hover:shadow-md transition-all duration-300 px-6 py-2.5 hover:-translate-y-px"
             >
               Reserve Date
             </button>
@@ -271,11 +271,11 @@ function Navbar() {
 
               <div className="space-y-1.5 w-6">
 
-                <span className="block w-full h-[1px] bg-slate-900"></span>
+                <span className="block w-full h-px bg-slate-900"></span>
 
-                <span className="block w-2/3 h-[1px] bg-slate-900 ml-auto"></span>
+                <span className="block w-2/3 h-px bg-slate-900 ml-auto"></span>
 
-                <span className="block w-full h-[1px] bg-slate-900"></span>
+                <span className="block w-full h-px bg-slate-900"></span>
 
               </div>
 

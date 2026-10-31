@@ -539,7 +539,7 @@ function Booking() {
       ====================================================== */}
       {modal.show && (
 
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center px-4">
 
           {/* BLURRED BACKGROUND */}
           <div

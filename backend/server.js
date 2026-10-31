@@ -225,6 +225,143 @@ app.put("/api/packages/:id", async (req, res) => {
 });
 
 
+app.post("/api/bookings", authMiddleware, async (req, res) => {
+  try {
+    const {
+      services,
+      packages,
+      bookingDateTime,
+      totalPrice,
+      totalDuration,
+      notes,
+    } = req.body;
+
+    const startTime = new Date(bookingDateTime);
+    const duration = Number(totalDuration);
+
+    // Validate booking information
+    if (
+      !startTime ||
+      Number.isNaN(startTime.getTime()) ||
+      !Number.isFinite(duration) ||
+      duration <= 0 ||
+      duration > 480 ||
+      !Array.isArray(services) ||
+      !Array.isArray(packages) ||
+      services.length + packages.length === 0
+    ) {
+      return res.status(400).json({
+        message: "Invalid booking information",
+      });
+    }
+
+    const endTime = new Date(startTime.getTime() + duration * 60000);
+
+    // Get appointment date and time in Sri Lanka
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Colombo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(startTime);
+
+    const getPart = (type) =>
+      Number(parts.find((part) => part.type === type).value);
+
+    const year = getPart("year");
+    const month = getPart("month");
+    const day = getPart("day");
+    const hour = getPart("hour");
+    const minute = getPart("minute");
+
+    const appointmentMinutes = hour * 60 + minute;
+
+    const localDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+    // Get today's date in Sri Lanka
+    const todayParts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Colombo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+
+    const today = `${todayParts.find((p) => p.type === "year").value}-${todayParts.find((p) => p.type === "month").value}-${todayParts.find((p) => p.type === "day").value}`;
+
+    if (localDate < today || startTime <= new Date()) {
+      return res.status(400).json({
+        message: "Please select a future appointment time",
+      });
+    }
+
+    // Check salon operating hours: 9 AM to 5 PM
+    if (appointmentMinutes < 540 || appointmentMinutes + duration > 1020) {
+      return res.status(400).json({
+        message: "Appointments are available between 9 AM and 5 PM",
+      });
+    }
+
+    // Get the beginning and end of the selected Sri Lankan date
+    const dayStart = new Date(Date.UTC(year, month - 1, day, -5, -30));
+
+    const dayEnd = new Date(Date.UTC(year, month - 1, day + 1, -5, -30));
+
+    // Find existing bookings for that date
+    const existingBookings = await Booking.find({
+      status: { $ne: "Cancelled" },
+      bookingDateTime: {
+        $gte: dayStart,
+        $lt: dayEnd,
+      },
+    }).select("bookingDateTime totalDuration");
+
+    // Check for overlapping appointments
+    const hasConflict = existingBookings.some((booking) => {
+      const existingStart = new Date(booking.bookingDateTime);
+
+      const existingEnd = new Date(
+        existingStart.getTime() + Number(booking.totalDuration) * 60000,
+      );
+
+      return startTime < existingEnd && endTime > existingStart;
+    });
+
+    if (hasConflict) {
+      return res.status(409).json({
+        message:
+          "This appointment time is no longer available. Please select another time.",
+      });
+    }
+
+    // Create booking
+    const booking = await Booking.create({
+      services,
+      packages,
+      bookingDateTime: startTime,
+      totalPrice,
+      totalDuration: duration,
+      notes: notes || "",
+      customer: req.customerId,
+    });
+
+    res.status(201).json({
+      message: "Booking Created Successfully",
+      booking,
+    });
+  } catch (error) {
+    console.error("Create booking error:", error);
+
+    res.status(500).json({
+      message: "Failed to create booking",
+      error: error.message,
+    });
+  }
+});
+
+
 app.post("/api/bookings",authMiddleware, async(req,res)=>{
   try{
     const booking = await Booking.create({
