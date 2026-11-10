@@ -1,13 +1,32 @@
 services:
 
+  mongo:
+    image: mongo:8.0
+    container_name: olivia-mongo
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
     container_name: olivia-backend
     env_file:
       - ./backend/.env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/olivia_bridal_beauty
     ports:
       - "5000:5000"
+    depends_on:
+      mongo:
+        condition: service_healthy
 
   frontend:
     build:
@@ -17,3 +36,6 @@ services:
       - "3000:80"
     depends_on:
       - backend
+
+volumes:
+  mongo-data:

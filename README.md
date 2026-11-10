@@ -108,11 +108,30 @@ configuration files, and assets.
 Install the following before running the project locally:
 
 -   Node.js and npm.
--   MongoDB Atlas account or another accessible MongoDB deployment.
+-   Docker Desktop (runs the local MongoDB database).
 -   Git (optional, for cloning and version control).
 
-Docker is **not required** for the local development workflow described
-below.
+## Running everything with Docker
+
+The Compose files start a local MongoDB container (`mongo`), the backend
+and the frontend. Database files are kept in the `mongo-data` Docker
+volume, so data survives container restarts.
+
+``` bash
+# production-style build (frontend on http://localhost:3000)
+docker compose up -d --build
+
+# development (Vite with hot reload on http://localhost:5173)
+docker compose -f docker-compose.dev.yml up -d --build
+```
+
+Inside Compose the backend always connects to
+`mongodb://mongo:27017/olivia_bridal_beauty`, overriding `MONGODB_URI`
+from `backend/.env`. MongoDB is also published on `localhost:27017`
+(this machine only), so you can browse it with MongoDB Compass.
+
+`docker compose down` stops the containers and keeps the data;
+`docker compose down -v` also deletes the database volume.
 
 ## Local installation and setup
 
@@ -130,11 +149,12 @@ Replace the placeholder with the URL of your GitHub repository.
 Create a file named `.env` inside the `backend` directory:
 
 ``` env
-MONGODB_URI=your_mongodb_connection_string
+MONGODB_URI=mongodb://localhost:27017/olivia_bridal_beauty
 JWT_SECRET=your_long_random_secret
 ```
 
--   `MONGODB_URI`: MongoDB connection string for the project database.
+-   `MONGODB_URI`: MongoDB connection string used when the backend runs
+    outside Docker. Start the database with `docker compose up -d mongo`.
 -   `JWT_SECRET`: A long, random secret used to sign authentication
     tokens.
 
